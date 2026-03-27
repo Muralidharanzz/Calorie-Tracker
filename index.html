@@ -2,12 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="theme-color" content="#00e676" />
+    <!-- Redmi 10A: 360px CSS width, no user-scaling, viewport-fit=cover for safe areas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#0d0d0d" />
+    <!-- Android Chrome specific -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="Caltos" />
+    <!-- Prevents FOUC on Android -->
+    <meta name="color-scheme" content="dark" />
+    <!-- iOS PWA (for any Safari user) -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Caltos" />
     <link rel="apple-touch-icon" href="/caltos_icon_cropped.png" />
     <title>Caltos</title>
     <link rel="icon" type="image/png" href="/caltos_icon_cropped.png" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   </head>
   <body>
     <div id="root"></div>
