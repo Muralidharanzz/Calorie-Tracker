@@ -1,132 +1,204 @@
+/* ═══════════════════════════════════════════
+   CALTOS — Mobile-first for Redmi 10A 360×800
+═══════════════════════════════════════════ */
+
 :root {
-  --bg-color: #0d0d0d;
-  --bg-gradient: radial-gradient(circle at top left, #1a2a22 0%, #0d0d0d 60%);
-  --surface-color: rgba(30, 30, 30, 0.6);
-  --surface-hover: rgba(45, 45, 45, 0.8);
-  --glass-border: 1px solid rgba(255, 255, 255, 0.08);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-  --text-primary: #ffffff;
-  --text-secondary: #a0a0a0;
+  --bg-color: #080f0a;
+  --bg-gradient: radial-gradient(ellipse at 20% 0%, #0d2818 0%, #080f0a 55%),
+                 radial-gradient(ellipse at 80% 100%, #001a30 0%, transparent 60%);
+  --surface-color: rgba(18, 28, 20, 0.85);
+  --surface-hover: rgba(25, 40, 28, 0.95);
+  --glass-border: 1px solid rgba(0, 230, 118, 0.12);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --text-primary: #f0fff6;
+  --text-secondary: #7a9c87;
   --accent-color: #00e676;
+  --accent-glow: rgba(0, 230, 118, 0.35);
   --accent-gradient: linear-gradient(135deg, #00e676 0%, #00c853 100%);
   --accent-hover: #00c853;
   --danger-color: #ff5252;
-  --danger-gradient: linear-gradient(135deg, #ff5252 0%, #d50000 100%);
-  --border-radius-lg: 20px;
-  --border-radius-md: 14px;
+  --danger-gradient: linear-gradient(135deg, #ff6b6b 0%, #d50000 100%);
+  --border-radius-lg: 22px;
+  --border-radius-md: 16px;
   --border-radius-sm: 10px;
-  --transition-speed: 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-  --max-width: 480px;
+  --transition-speed: 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-* {
+/* ── Reset ── */
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  /* Remove blue flash on tap for Android */
   -webkit-tap-highlight-color: transparent;
 }
 
 html {
-  /* Prevent elastic overscroll bounce on Redmi MIUI browser */
-  overscroll-behavior: none;
+  overscroll-behavior-y: none;
+  overscroll-behavior-x: none;
+  /* Prevent horizontal scroll globally */
+  overflow-x: hidden;
+  width: 100%;
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--bg-color);
   background-image: var(--bg-gradient);
   background-attachment: fixed;
   color: var(--text-primary);
-  display: flex;
-  justify-content: center;
   min-height: 100vh;
-  min-height: 100dvh; /* handles Redmi browser address bar resizing */
+  min-height: 100dvh;
   -webkit-font-smoothing: antialiased;
-  -webkit-overflow-scrolling: touch; /* momentum scroll */
+  /* KEY FIX: no flex centering that can break on Android — use margin auto instead */
+  width: 100%;
   overflow-x: hidden;
 }
 
+/* ── App shell — full width, max capped ── */
 .app-container {
   width: 100%;
-  max-width: var(--max-width);
-  min-height: 100vh;
+  /* KEY FIX: do NOT use overflow:hidden → clips content on Redmi */
+  overflow-x: clip;  /* clips without creating a scroll container */
+  overflow-y: visible;
+  position: relative;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  position: relative;
-  overflow: hidden;
-  /* Respect Redmi 10A notch / gesture bar */
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-top: env(safe-area-inset-top, 0px);
 }
 
-/* Ambient glow blob — smaller for mobile perf */
+/* Vibrant ambient glow — pointer-events none so it never affects layout */
 .app-container::before {
-  content: "";
-  position: absolute;
-  top: -80px;
-  right: -80px;
-  width: 220px;
-  height: 220px;
-  background: var(--accent-color);
-  filter: blur(120px);
-  opacity: 0.15;
+  content: '';
+  position: fixed; /* fixed so it doesn't affect document flow */
+  top: -60px;
+  right: -60px;
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(circle, rgba(0,230,118,0.25) 0%, transparent 70%);
+  filter: blur(40px);
   z-index: 0;
   pointer-events: none;
 }
 
-/* ── Header ── */
+.app-container::after {
+  content: '';
+  position: fixed;
+  bottom: 10%;
+  left: -60px;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(0,100,200,0.15) 0%, transparent 70%);
+  filter: blur(40px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ══════════════════════
+   HEADER
+══════════════════════ */
 .header {
-  padding: 22px 20px 16px;
+  padding: 20px 18px 14px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  position: relative;
-  z-index: 1;
+  gap: 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(8, 15, 10, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0, 230, 118, 0.08);
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .logo-container h1 {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 800;
-  letter-spacing: -1px;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #00e676, #00c853);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-/* ── Main content ── */
+/* ══════════════════════
+   MAIN CONTENT — scrolls naturally
+══════════════════════ */
 .main-content {
-  padding: 0 16px calc(36px + env(safe-area-inset-bottom));
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
+  padding: 18px 16px calc(36px + env(safe-area-inset-bottom, 0px));
   position: relative;
   z-index: 1;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  /* Full natural scroll — no overflow-y:auto clip */
+  overflow-y: visible;
 }
 
-/* ── Glassmorphic cards ── */
+/* ══════════════════════
+   GLASSMORPHIC CARDS
+══════════════════════ */
 .dashboard, .food-logger, .history-view, .insights-view, .insight-card, .weight-tracker-promo {
   background: var(--surface-color);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border: var(--glass-border);
   border-radius: var(--border-radius-lg);
-  padding: 22px 20px;
-  box-shadow: var(--glass-shadow);
-  animation: slideUp 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  padding: 20px 18px;
+  box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(0,230,118,0.08);
+  /* Staggered slide-in — each card delayed slightly */
+  animation: cardSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  position: relative;
+  overflow: hidden; /* cards can clip their own content */
 }
 
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(14px); }
-  to   { opacity: 1; transform: translateY(0); }
+/* Stagger delay for successive cards */
+.dashboard                { animation-delay: 0.0s; }
+.food-logger              { animation-delay: 0.08s; }
+.history-view             { animation-delay: 0.08s; }
+.insights-view            { animation-delay: 0.08s; }
+.insight-card:nth-child(1){ animation-delay: 0.0s; }
+.insight-card:nth-child(2){ animation-delay: 0.1s; }
+.insight-card:nth-child(3){ animation-delay: 0.2s; }
+.insight-card:nth-child(4){ animation-delay: 0.3s; }
+
+@keyframes cardSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* ── Calorie display ── */
+/* Subtle green top-edge accent line on cards */
+.dashboard::before,
+.food-logger::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 20px; right: 20px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,230,118,0.4), transparent);
+}
+
+/* ══════════════════════
+   DASHBOARD METRICS
+══════════════════════ */
 .calories-info {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
+  align-items: flex-start;
+  margin-bottom: 18px;
 }
 
 .calorie-box {
@@ -135,85 +207,110 @@ body {
 }
 
 .calorie-box .label {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-secondary);
   text-transform: uppercase;
-  letter-spacing: 1.5px;
+  letter-spacing: 1.8px;
   margin-bottom: 4px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .calorie-box .value {
-  font-size: 36px;
-  font-weight: 800;
-  letter-spacing: -1px;
+  font-size: 38px;
+  font-weight: 900;
+  letter-spacing: -2px;
+  line-height: 1;
+  /* clamp so it never overflows on any screen */
+  max-width: 45vw;
 }
 
-.calorie-box .remaining {
-  color: var(--accent-color);
-  text-shadow: 0 0 10px rgba(0, 230, 118, 0.3);
+/* Vibrant green glow on remaining calories */
+.value--accent {
+  background: linear-gradient(135deg, #00e676, #69f0ae);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 12px rgba(0,230,118,0.5));
+}
+
+.value--danger {
+  background: linear-gradient(135deg, #ff5252, #ff8a80);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 12px rgba(255,82,82,0.5));
 }
 
 /* ── Progress bar ── */
 .progress-bar-container {
   height: 8px;
-  background: rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.06);
   border-radius: 4px;
   overflow: hidden;
-  box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
 }
 
 .progress-bar {
   height: 100%;
   border-radius: 4px;
-  transition: width 1s cubic-bezier(0.2, 1, 0.2, 1), background-color 0.5s ease;
+  background: var(--accent-gradient);
+  box-shadow: 0 0 12px rgba(0, 230, 118, 0.4);
+  transition: width 1.2s cubic-bezier(0.2, 1, 0.2, 1), background-color 0.5s ease;
 }
 
-/* ── Inputs ── */
+/* ══════════════════════
+   INPUTS
+══════════════════════ */
 .input-group {
   display: flex;
   flex-direction: column;
 }
 
 .input {
-  background: rgba(0,0,0,0.2);
-  border: 1px solid rgba(255,255,255,0.1);
-  padding: 14px 16px;
+  background: rgba(0, 230, 118, 0.04);
+  border: 1px solid rgba(0, 230, 118, 0.15);
+  padding: 15px 16px;
   border-radius: var(--border-radius-md);
   color: var(--text-primary);
-  /* Keep ≥16px — Android auto-zooms inputs smaller than this */
-  font-size: 16px;
+  font-size: 16px;  /* Never below 16px — Android auto-zooms */
   font-family: inherit;
   outline: none;
-  min-height: 50px;        /* accessible touch target */
+  min-height: 52px;
   touch-action: manipulation;
-  transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  width: 100%;
+}
+
+.input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
 }
 
 .input:focus {
   border-color: var(--accent-color);
-  background: rgba(0, 230, 118, 0.05);
-  box-shadow: 0 0 0 3px rgba(0, 230, 118, 0.12);
+  background: rgba(0, 230, 118, 0.07);
+  box-shadow: 0 0 0 3px rgba(0, 230, 118, 0.15);
 }
 
 .input-calories {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
 }
 
-/* ── Meal type grid ── */
+/* ══════════════════════
+   MEAL TYPE BUTTONS
+══════════════════════ */
 .meal-types {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 10px;
 }
 
 .meal-btn {
-  background: rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.04);
   color: var(--text-secondary);
-  border: 1px solid transparent;
-  padding: 14px 10px;
-  min-height: 52px;        /* 48px recommended touch target */
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 14px 8px;
+  min-height: 52px;
   border-radius: var(--border-radius-md);
   font-size: 14px;
   font-weight: 600;
@@ -231,10 +328,13 @@ body {
   background: var(--accent-gradient);
   color: #000;
   border-color: transparent;
-  box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 230, 118, 0.4);
+  font-weight: 800;
 }
 
-/* ── Primary button ── */
+/* ══════════════════════
+   PRIMARY BUTTON
+══════════════════════ */
 .btn-primary {
   background: var(--accent-gradient);
   color: #000;
@@ -246,36 +346,25 @@ body {
   font-weight: 800;
   font-family: inherit;
   cursor: pointer;
-  margin-top: 10px;
+  margin-top: 12px;
   touch-action: manipulation;
   transition: transform 0.15s ease, box-shadow 0.3s ease;
-  box-shadow: 0 6px 20px rgba(0, 230, 118, 0.2);
+  box-shadow: 0 6px 24px rgba(0, 230, 118, 0.3);
   width: 100%;
+  letter-spacing: 0.3px;
 }
 
 .btn-primary:active {
   transform: scale(0.97);
+  box-shadow: 0 2px 10px rgba(0, 230, 118, 0.2);
 }
 
-.btn-primary:hover {
-  box-shadow: 0 8px 25px rgba(0, 230, 118, 0.35);
-}
-
-/* ── Extra-narrow fallback (≤360px) ── */
-@media (max-width: 360px) {
-  .header { padding: 16px 14px 12px; }
-  .main-content { padding: 0 12px calc(28px + env(safe-area-inset-bottom)); gap: 14px; }
-  .dashboard, .food-logger, .history-view, .insights-view, .insight-card { padding: 18px 16px; }
-  .calorie-box .value { font-size: 32px; }
-  .logo-container h1 { font-size: 22px; }
-}
-
-/* ════════════════════════════════════════
+/* ══════════════════════
    HAMBURGER BUTTON
-════════════════════════════════════════ */
+══════════════════════ */
 .hamburger-btn {
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(0, 230, 118, 0.08);
+  border: 1px solid rgba(0, 230, 118, 0.18);
   border-radius: 12px;
   width: 44px;
   height: 44px;
@@ -285,50 +374,49 @@ body {
   justify-content: center;
   gap: 5px;
   cursor: pointer;
-  padding: 0;
   touch-action: manipulation;
-  transition: background var(--transition-speed), transform 0.2s ease;
+  transition: background var(--transition-speed), transform 0.2s;
   flex-shrink: 0;
+  padding: 0;
 }
 
 .hamburger-btn span {
   display: block;
-  width: 20px;
+  width: 18px;
   height: 2px;
-  background: var(--text-primary);
+  background: var(--accent-color);
   border-radius: 2px;
   transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
   transform-origin: center;
 }
 
-/* Morph to X when open */
 .hamburger-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .hamburger-btn.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
 .hamburger-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-.hamburger-btn:active { transform: scale(0.9); }
+.hamburger-btn:active { transform: scale(0.88); }
 
 /* ── Header page label ── */
 .header-page-label {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--text-secondary);
-  letter-spacing: 0.3px;
   flex: 1;
   text-align: center;
+  letter-spacing: 0.3px;
 }
 
-/* ════════════════════════════════════════
+/* ══════════════════════
    DRAWER BACKDROP
-════════════════════════════════════════ */
+══════════════════════ */
 .drawer-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   z-index: 100;
-  animation: fadeIn 0.25s ease forwards;
+  animation: fadeIn 0.22s ease forwards;
 }
 
 @keyframes fadeIn {
@@ -336,49 +424,48 @@ body {
   to   { opacity: 1; }
 }
 
-/* ════════════════════════════════════════
+/* ══════════════════════
    BOTTOM-SHEET DRAWER
-════════════════════════════════════════ */
+══════════════════════ */
 .nav-drawer {
   position: fixed;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%) translateY(100%);
+  left: 0;
+  right: 0;
   width: 100%;
-  max-width: 480px;
-  background: #161f1a;
-  border: 1px solid rgba(255,255,255,0.1);
+  background: linear-gradient(175deg, #0f1f14 0%, #080f0a 100%);
+  border: 1px solid rgba(0, 230, 118, 0.15);
+  border-bottom: none;
   border-radius: 28px 28px 0 0;
-  padding: 10px 20px calc(32px + env(safe-area-inset-bottom));
+  padding: 8px 20px calc(28px + env(safe-area-inset-bottom, 0px));
   z-index: 101;
-  transition: transform 0.42s cubic-bezier(0.2, 0.8, 0.2, 1);
-  box-shadow: 0 -16px 60px rgba(0,0,0,0.6);
+  transform: translateY(100%);
+  transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 -20px 60px rgba(0, 230, 118, 0.08), 0 -4px 30px rgba(0,0,0,0.7);
 }
 
 .nav-drawer.open {
-  transform: translateX(-50%) translateY(0);
+  transform: translateY(0);
 }
 
-/* Drag handle pill */
 .drawer-handle {
-  width: 40px;
+  width: 36px;
   height: 4px;
-  background: rgba(255,255,255,0.2);
+  background: rgba(0, 230, 118, 0.3);
   border-radius: 2px;
-  margin: 6px auto 18px;
+  margin: 8px auto 20px;
 }
 
 .drawer-title {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 2.5px;
   color: var(--text-secondary);
-  margin-bottom: 12px;
-  padding-left: 4px;
+  margin-bottom: 10px;
+  padding-left: 6px;
 }
 
-/* ── Drawer nav items ── */
 .drawer-nav {
   display: flex;
   flex-direction: column;
@@ -388,35 +475,35 @@ body {
 .drawer-item {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   background: transparent;
   border: 1px solid transparent;
   border-radius: 18px;
-  padding: 14px 16px;
+  padding: 12px 14px;
   min-height: 64px;
   cursor: pointer;
   touch-action: manipulation;
   text-align: left;
   width: 100%;
-  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
   font-family: inherit;
   position: relative;
+  transition: all 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .drawer-item:active {
-  background: rgba(255,255,255,0.06);
+  background: rgba(0,230,118,0.06);
   transform: scale(0.98);
 }
 
 .drawer-item.active {
   background: rgba(0, 230, 118, 0.1);
-  border-color: rgba(0, 230, 118, 0.25);
+  border-color: rgba(0, 230, 118, 0.22);
 }
 
 .drawer-item-icon {
-  font-size: 26px;
-  width: 44px;
-  height: 44px;
+  font-size: 24px;
+  width: 46px;
+  height: 46px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -426,7 +513,8 @@ body {
 }
 
 .drawer-item.active .drawer-item-icon {
-  background: rgba(0, 230, 118, 0.15);
+  background: rgba(0, 230, 118, 0.14);
+  box-shadow: 0 0 16px rgba(0,230,118,0.2);
 }
 
 .drawer-item-text {
@@ -434,6 +522,7 @@ body {
   flex-direction: column;
   gap: 3px;
   flex: 1;
+  min-width: 0; /* prevents flex overflow */
 }
 
 .drawer-item-label {
@@ -449,7 +538,6 @@ body {
 .drawer-item-desc {
   font-size: 12px;
   color: var(--text-secondary);
-  font-weight: 400;
 }
 
 .drawer-item-active-dot {
@@ -457,6 +545,18 @@ body {
   height: 8px;
   border-radius: 50%;
   background: var(--accent-color);
-  box-shadow: 0 0 8px rgba(0,230,118,0.6);
+  box-shadow: 0 0 10px rgba(0,230,118,0.7);
   flex-shrink: 0;
+}
+
+/* ══════════════════════
+   RESPONSIVE ≤360px
+══════════════════════ */
+@media (max-width: 360px) {
+  .header         { padding: 16px 14px 12px; }
+  .main-content   { padding: 14px 12px calc(28px + env(safe-area-inset-bottom, 0px)); gap: 14px; }
+  .dashboard, .food-logger, .history-view,
+  .insights-view, .insight-card { padding: 18px 14px; }
+  .calorie-box .value { font-size: 34px; }
+  .logo-container h1  { font-size: 20px; }
 }

@@ -61,7 +61,6 @@ const FoodLogger = ({ onAddEntry, recentFoods }) => {
           className="input" 
           value={foodName}
           onChange={(e) => setFoodName(e.target.value)}
-          autoFocus
         />
       </div>
       

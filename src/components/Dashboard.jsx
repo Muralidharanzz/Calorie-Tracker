@@ -21,7 +21,6 @@ const Dashboard = ({ user, entries }) => {
   // Determine indicators
   const isExceeded = totalConsumed > user.dailyCalorieGoal;
   const progressColor = isExceeded ? 'var(--danger-color)' : 'var(--accent-color)';
-  const remainingColor = isExceeded ? 'var(--danger-color)' : 'var(--accent-color)';
 
   // Mock Discipline Score (Score 10 if not exceeded, deduct points for exceeding)
   // And requires at least 3 meals logged
@@ -49,7 +48,8 @@ const Dashboard = ({ user, entries }) => {
         </div>
         <div className="calorie-box" style={{ alignItems: 'flex-end' }}>
           <span className="label">Remaining</span>
-          <span className="value" style={{ color: remainingColor }}>
+          {/* Use class instead of inline style so CSS gradient applies */}
+          <span className={`value ${isExceeded ? 'value--danger' : 'value--accent'}`}>
             {isExceeded ? `+${Math.abs(remaining)}` : remaining}
           </span>
         </div>
