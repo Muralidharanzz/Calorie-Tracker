@@ -1,0 +1,233 @@
+:root {
+  --bg-color: #0d0d0d;
+  --bg-gradient: radial-gradient(circle at top left, #1a2a22 0%, #0d0d0d 60%);
+  --surface-color: rgba(30, 30, 30, 0.6);
+  --surface-hover: rgba(45, 45, 45, 0.8);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0a0;
+  --accent-color: #00e676;
+  --accent-gradient: linear-gradient(135deg, #00e676 0%, #00c853 100%);
+  --accent-hover: #00c853;
+  --danger-color: #ff5252;
+  --danger-gradient: linear-gradient(135deg, #ff5252 0%, #d50000 100%);
+  --border-radius-lg: 24px;
+  --border-radius-md: 16px;
+  --border-radius-sm: 12px;
+  --transition-speed: 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  --max-width: 480px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg-color);
+  background-image: var(--bg-gradient);
+  background-attachment: fixed;
+  color: var(--text-primary);
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-container {
+  width: 100%;
+  max-width: var(--max-width);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Add a cool ambient glow blob */
+.app-container::before {
+  content: "";
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 300px;
+  height: 300px;
+  background: var(--accent-color);
+  filter: blur(150px);
+  opacity: 0.15;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.header {
+  padding: 32px 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.logo-container h1 {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.main-content {
+  padding: 0 20px 40px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Glassmorphic sections */
+.dashboard, .food-logger, .history-view, .insights-view, .insight-card, .weight-tracker-promo {
+  background: var(--surface-color);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: var(--glass-border);
+  border-radius: var(--border-radius-lg);
+  padding: 24px;
+  box-shadow: var(--glass-shadow);
+  animation: slideUp 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Dashboard specific */
+.calories-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.calorie-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.calorie-box .label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.calorie-box .value {
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.calorie-box .remaining {
+  color: var(--accent-color);
+  text-shadow: 0 0 10px rgba(0, 230, 118, 0.3);
+}
+
+.progress-bar-container {
+  height: 10px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+}
+
+.progress-bar {
+  height: 100%;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  transition: width 1s cubic-bezier(0.2, 1, 0.2, 1), background-color 0.5s ease;
+}
+
+/* Inputs */
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.input {
+  background: rgba(0,0,0,0.2);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 18px;
+  border-radius: var(--border-radius-md);
+  color: var(--text-primary);
+  font-size: 16px;
+  transition: all var(--transition-speed);
+  font-family: inherit;
+  outline: none;
+}
+
+.input:focus {
+  border-color: var(--accent-color);
+  background: rgba(0, 230, 118, 0.05);
+  box-shadow: 0 0 0 4px rgba(0, 230, 118, 0.1);
+}
+
+.input-calories {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.meal-types {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.meal-btn {
+  background: rgba(255,255,255,0.05);
+  color: var(--text-secondary);
+  border: 1px solid transparent;
+  padding: 14px;
+  border-radius: var(--border-radius-md);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-speed);
+}
+
+.meal-btn:hover {
+  background: rgba(255,255,255,0.1);
+  color: var(--text-primary);
+}
+
+.meal-btn.active {
+  background: var(--accent-gradient);
+  color: #000;
+  border-color: transparent;
+  box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3);
+}
+
+.btn-primary {
+  background: var(--accent-gradient);
+  color: #000;
+  border: none;
+  padding: 18px;
+  border-radius: var(--border-radius-md);
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: transform 0.15s ease, box-shadow 0.3s ease;
+  box-shadow: 0 6px 20px rgba(0, 230, 118, 0.2);
+}
+
+.btn-primary:active {
+  transform: scale(0.96);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 8px 25px rgba(0, 230, 118, 0.4);
+}
