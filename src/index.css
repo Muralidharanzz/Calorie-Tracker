@@ -78,7 +78,7 @@ body {
 
 /* ── Header ── */
 .header {
-  padding: 18px 16px 12px;
+  padding: 22px 20px 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -94,11 +94,11 @@ body {
 
 /* ── Main content ── */
 .main-content {
-  padding: 0 14px calc(28px + env(safe-area-inset-bottom));
+  padding: 0 16px calc(36px + env(safe-area-inset-bottom));
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 18px;
   position: relative;
   z-index: 1;
   overflow-y: auto;
@@ -112,7 +112,7 @@ body {
   -webkit-backdrop-filter: blur(16px);
   border: var(--glass-border);
   border-radius: var(--border-radius-lg);
-  padding: 18px;
+  padding: 22px 20px;
   box-shadow: var(--glass-shadow);
   animation: slideUp 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
@@ -126,7 +126,7 @@ body {
 .calories-info {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .calorie-box {
@@ -144,7 +144,7 @@ body {
 }
 
 .calorie-box .value {
-  font-size: 34px;     /* 38→34: fits 360px wide without overflow */
+  font-size: 36px;
   font-weight: 800;
   letter-spacing: -1px;
 }
@@ -205,15 +205,15 @@ body {
 .meal-types {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 12px;
 }
 
 .meal-btn {
   background: rgba(255,255,255,0.05);
   color: var(--text-secondary);
   border: 1px solid transparent;
-  padding: 12px 8px;
-  min-height: 48px;        /* 48px recommended touch target */
+  padding: 14px 10px;
+  min-height: 52px;        /* 48px recommended touch target */
   border-radius: var(--border-radius-md);
   font-size: 14px;
   font-weight: 600;
@@ -239,8 +239,8 @@ body {
   background: var(--accent-gradient);
   color: #000;
   border: none;
-  padding: 15px;
-  min-height: 52px;
+  padding: 17px;
+  min-height: 56px;
   border-radius: var(--border-radius-md);
   font-size: 16px;
   font-weight: 800;
@@ -261,11 +261,202 @@ body {
   box-shadow: 0 8px 25px rgba(0, 230, 118, 0.35);
 }
 
-/* ── Extra-narrow fallback (≤360px, e.g. Redmi 10A at 90% browser zoom) ── */
+/* ── Extra-narrow fallback (≤360px) ── */
 @media (max-width: 360px) {
-  .header { padding: 14px 12px 10px; }
-  .main-content { padding: 0 10px calc(24px + env(safe-area-inset-bottom)); gap: 12px; }
-  .dashboard, .food-logger, .history-view, .insights-view, .insight-card { padding: 14px; }
-  .calorie-box .value { font-size: 30px; }
-  .logo-container h1 { font-size: 21px; }
+  .header { padding: 16px 14px 12px; }
+  .main-content { padding: 0 12px calc(28px + env(safe-area-inset-bottom)); gap: 14px; }
+  .dashboard, .food-logger, .history-view, .insights-view, .insight-card { padding: 18px 16px; }
+  .calorie-box .value { font-size: 32px; }
+  .logo-container h1 { font-size: 22px; }
+}
+
+/* ════════════════════════════════════════
+   HAMBURGER BUTTON
+════════════════════════════════════════ */
+.hamburger-btn {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  padding: 0;
+  touch-action: manipulation;
+  transition: background var(--transition-speed), transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.hamburger-btn span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--text-primary);
+  border-radius: 2px;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transform-origin: center;
+}
+
+/* Morph to X when open */
+.hamburger-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger-btn.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.hamburger-btn:active { transform: scale(0.9); }
+
+/* ── Header page label ── */
+.header-page-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.3px;
+  flex: 1;
+  text-align: center;
+}
+
+/* ════════════════════════════════════════
+   DRAWER BACKDROP
+════════════════════════════════════════ */
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 100;
+  animation: fadeIn 0.25s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ════════════════════════════════════════
+   BOTTOM-SHEET DRAWER
+════════════════════════════════════════ */
+.nav-drawer {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(100%);
+  width: 100%;
+  max-width: 480px;
+  background: #161f1a;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 28px 28px 0 0;
+  padding: 10px 20px calc(32px + env(safe-area-inset-bottom));
+  z-index: 101;
+  transition: transform 0.42s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 0 -16px 60px rgba(0,0,0,0.6);
+}
+
+.nav-drawer.open {
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Drag handle pill */
+.drawer-handle {
+  width: 40px;
+  height: 4px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 2px;
+  margin: 6px auto 18px;
+}
+
+.drawer-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  padding-left: 4px;
+}
+
+/* ── Drawer nav items ── */
+.drawer-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.drawer-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 18px;
+  padding: 14px 16px;
+  min-height: 64px;
+  cursor: pointer;
+  touch-action: manipulation;
+  text-align: left;
+  width: 100%;
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  font-family: inherit;
+  position: relative;
+}
+
+.drawer-item:active {
+  background: rgba(255,255,255,0.06);
+  transform: scale(0.98);
+}
+
+.drawer-item.active {
+  background: rgba(0, 230, 118, 0.1);
+  border-color: rgba(0, 230, 118, 0.25);
+}
+
+.drawer-item-icon {
+  font-size: 26px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.05);
+  border-radius: 14px;
+  flex-shrink: 0;
+}
+
+.drawer-item.active .drawer-item-icon {
+  background: rgba(0, 230, 118, 0.15);
+}
+
+.drawer-item-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+}
+
+.drawer-item-label {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.drawer-item.active .drawer-item-label {
+  color: var(--accent-color);
+}
+
+.drawer-item-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.drawer-item-active-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  box-shadow: 0 0 8px rgba(0,230,118,0.6);
+  flex-shrink: 0;
 }

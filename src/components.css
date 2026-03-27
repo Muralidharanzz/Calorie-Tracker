@@ -1,41 +1,4 @@
-/* Components CSS — Mobile-optimised for Redmi 10A (360×800 CSS px) */
-
-/* ── Tab bar ── */
-.tabs {
-  display: flex;
-  background: rgba(0,0,0,0.3);
-  border-radius: 20px;
-  padding: 3px;
-  border: 1px solid rgba(255,255,255,0.05);
-  gap: 2px;
-}
-
-.tab-btn {
-  background: transparent;
-  border: none;
-  color: var(--text-secondary);
-  /* 44px+ touch target, tight horizontal padding for 360px */
-  padding: 9px 12px;
-  min-height: 44px;
-  border-radius: 17px;
-  font-weight: 600;
-  cursor: pointer;
-  font-size: 13px;
-  font-family: inherit;
-  touch-action: manipulation;
-  transition: all var(--transition-speed);
-  white-space: nowrap;
-}
-
-.tab-btn.active {
-  background: rgba(255,255,255,0.15);
-  color: var(--text-primary);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-
-.tab-btn:active {
-  transform: scale(0.94);
-}
+/* Navigation is now the hamburger bottom-sheet drawer — see index.css */
 
 /* ── Utilities ── */
 .flex-between {
@@ -113,7 +76,7 @@
   justify-content: space-between;
   align-items: center;
   background: rgba(0,0,0,0.2);
-  padding: 14px;
+  padding: 16px 18px;
   border-radius: var(--border-radius-lg);
   border: var(--glass-border);
 }
@@ -167,12 +130,12 @@
 .meal-sections {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 18px;
 }
 
 .meal-section h4 {
   color: var(--text-secondary);
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 1.5px;
@@ -183,7 +146,7 @@
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .entry-item {
@@ -192,9 +155,9 @@
   align-items: center;
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.05);
-  padding: 14px 16px;
+  padding: 16px 18px;
   border-radius: var(--border-radius-md);
-  min-height: 52px;
+  min-height: 56px;
   transition: background var(--transition-speed);
 }
 
@@ -246,8 +209,8 @@
 
 /* ── Companion card ── */
 .companion-card {
-  margin-top: 18px;
-  padding: 16px;
+  margin-top: 20px;
+  padding: 18px 20px;
   border-radius: var(--border-radius-md);
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -269,7 +232,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .companion-icon { font-size: 18px; }
