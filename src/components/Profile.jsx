@@ -72,7 +72,7 @@ const Profile = ({ user, updateUserName, updateUserGoal, updateCompanionPersona,
         </div>
 
         <button className="btn-primary" style={{ width: '100%' }} onClick={handleSave}>
-          {success ? 'Saved! ✓' : 'Update Goal'}
+          {success ? 'Saved! ✓' : 'Save Profile Settings'}
         </button>
       </div>
 
