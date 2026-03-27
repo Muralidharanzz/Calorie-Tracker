@@ -44,21 +44,21 @@ export function useDataStore() {
     localStorage.setItem(STORAGE_KEYS.RECENT_FOODS, JSON.stringify(recentFoods));
   }, [recentFoods]);
 
-  // Actions
+  // Actions — use functional setState to avoid stale closure overwrites
   const updateUserName = (name) => {
-    setUser({ ...user, userName: name });
+    setUser(prev => ({ ...prev, userName: name }));
   };
 
   const updateUserGoal = (goal) => {
-    setUser({ ...user, dailyCalorieGoal: goal });
+    setUser(prev => ({ ...prev, dailyCalorieGoal: goal }));
   };
 
   const updateCompanionPersona = (persona) => {
-    setUser({ ...user, companionPersona: persona });
+    setUser(prev => ({ ...prev, companionPersona: persona }));
   };
 
   const updateMealTimes = (times) => {
-    setUser({ ...user, mealTimes: times });
+    setUser(prev => ({ ...prev, mealTimes: times }));
   };
 
   const addEntry = (entry) => {

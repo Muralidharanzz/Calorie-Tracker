@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const Profile = ({ user, updateUserName, updateUserGoal, updateCompanionPersona, updateMealTimes, onNavigateHistory }) => {
   const [name, setName] = useState(user.userName || '');
@@ -6,6 +6,14 @@ const Profile = ({ user, updateUserName, updateUserGoal, updateCompanionPersona,
   const [persona, setPersona] = useState(user.companionPersona || 'balanced');
   const [mealTimes, setMealTimes] = useState(user.mealTimes || { Breakfast: '09:00', Lunch: '13:00', Dinner: '19:00' });
   const [success, setSuccess] = useState(false);
+
+  // Keep local form state in sync whenever the user object changes (e.g. after save or on reload)
+  useEffect(() => {
+    setName(user.userName || '');
+    setGoal(user.dailyCalorieGoal);
+    setPersona(user.companionPersona || 'balanced');
+    setMealTimes(user.mealTimes || { Breakfast: '09:00', Lunch: '13:00', Dinner: '19:00' });
+  }, [user]);
 
   const handleSave = () => {
     updateUserName(name);
