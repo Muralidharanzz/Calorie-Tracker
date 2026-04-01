@@ -20,10 +20,10 @@ const Dashboard = ({ user, entries }) => {
 
   const currentStreak = useMemo(() => getCurrentStreak(entries), [entries]);
 
-  // Use the new 100-point engine
+  // Use the new 100-point engine with Meal Times
   const { score, grade, color, breakdown } = useMemo(() => 
-    calculateScore(todayEntries, user.dailyCalorieGoal, currentStreak),
-  [todayEntries, user.dailyCalorieGoal, currentStreak]);
+    calculateScore(todayEntries, user.dailyCalorieGoal, currentStreak, user.mealTimes),
+  [todayEntries, user.dailyCalorieGoal, currentStreak, user.mealTimes]);
 
   const totalConsumed = useMemo(() =>
     todayEntries.reduce((acc, curr) => acc + Number(curr.calories), 0),

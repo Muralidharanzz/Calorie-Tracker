@@ -60,7 +60,7 @@ const ScoreBreakdown = () => {
             <span className="score-pill green">100</span>
           </div>
           <div className="score-row">
-            <span>Perfect Calorie Range (85%-105%)</span>
+            <span>Perfect Calorie Range (±100)</span>
             <span className="score-pill green">+0</span>
           </div>
           <div className="score-row">
@@ -68,16 +68,16 @@ const ScoreBreakdown = () => {
             <span className="score-pill green">+5 to +10</span>
           </div>
           <div className="score-row">
-            <span>Missing Calories / Overeating</span>
+            <span>Volume Deviation</span>
             <span className="score-pill amber">Dynamic</span>
           </div>
           <div className="score-row">
-            <span>Skipping Breakfast</span>
-            <span className="score-pill red">–10</span>
+            <span>Late Meal (&gt;60m past Profile Time)</span>
+            <span className="score-pill red">–5 each</span>
           </div>
           <div className="score-row">
-            <span>Skipping Lunch &amp; Dinner</span>
-            <span className="score-pill red">–10</span>
+            <span>Skipped Breakfast/Lunch/Dinner</span>
+            <span className="score-pill red">–10 each</span>
           </div>
           <div className="score-row">
             <span>Unhealthy Snack Spike (&gt;35%)</span>

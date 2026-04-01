@@ -5,7 +5,7 @@
  * @param {number} streak - The current day streak
  * @returns {Object} { score, grade, color, breakdown }
  */
-export function calculateScore(todayEntries, dailyGoal, streak) {
+export function calculateScore(todayEntries, dailyGoal, streak, mealTimes = {}) {
   let score = 100;
   const breakdown = [];
   
@@ -24,55 +24,76 @@ export function calculateScore(todayEntries, dailyGoal, streak) {
     };
   }
 
-  // 1. Total Volume
+  // 1. Total Volume (±100 Buffer)
   const totalCals = todayEntries.reduce((acc, e) => acc + e.calories, 0);
-  const pctOfGoal = totalCals / dailyGoal;
+  const diff = totalCals - dailyGoal;
+  const devAbs = Math.abs(diff);
   const currentHour = new Date().getHours();
 
-  // Volume penalties for Under-tracking should only apply late in the day (after 6 PM)
-  if (currentHour >= 18) {
-    // The Ghost Town: Logged less than 25% of goal
-    if (pctOfGoal < 0.25) {
-      score -= 40;
-      addBreakdown('Ghost Town (Extreme Under-tracking)', -40, 'penalty');
-    } 
-    // Under-eating but tracked something (25% to 85%)
-    else if (pctOfGoal < 0.85) {
-      const dev = (0.85 - pctOfGoal) * 100;
-      const penalty = Math.round(dev * 0.5);
-      score -= penalty;
-      addBreakdown('Calorie Volume (Under Goal)', -penalty, 'penalty');
-    }
+  // "Ghost Town" only applies late in the day (after 6 PM)
+  if (currentHour >= 18 && totalCals < (dailyGoal * 0.25)) {
+    score -= 40;
+    addBreakdown('Ghost Town (Extreme Under-tracking)', -40, 'penalty');
+  } else if (currentHour >= 18 && diff < -100) {
+    // Under-eating (more than 100 calories below goal)
+    // Lose 2 points for every 50 calories below buffer
+    const penalty = Math.round(((Math.abs(diff) - 100) / 50) * 2);
+    score -= penalty;
+    addBreakdown(`Volume (${Math.abs(diff)} kcal Under)`, -penalty, 'penalty');
   }
 
-  // Perfect Zone Check (Applies anytime they hit it)
-  if (pctOfGoal >= 0.85 && pctOfGoal <= 1.05) {
-    addBreakdown('Perfect Calorie Range', 0, 'bonus');
+  // Perfect Zone Check
+  if (devAbs <= 100) {
+    addBreakdown('Perfect Calorie Range (±100)', 0, 'bonus');
   }
-  // Overeating: > 105% (Applies anytime)
-  if (pctOfGoal > 1.05) {
-    const dev = (pctOfGoal - 1.05) * 100;
-    const penalty = Math.round(dev * 0.5);
+  
+  // Overeating: > 100 over goal
+  if (diff > 100) {
+    const penalty = Math.round(((diff - 100) / 50) * 2);
     const finalPenalty = Math.min(penalty, 50);
     score -= finalPenalty;
-    addBreakdown('Calorie Volume (Exceeded)', -finalPenalty, 'penalty');
+    addBreakdown(`Volume (${diff} kcal Over)`, -finalPenalty, 'penalty');
   }
 
-  // 2. Meal Balance (OMAD / Missing Meals) - Time Aware
-  const loggedMeals = new Set(todayEntries.map(e => e.mealType));
-  
-  if (!loggedMeals.has('Breakfast') && currentHour >= 10) {
-    score -= 10;
-    addBreakdown('Skipped Breakfast', -10, 'penalty');
-  }
-  if (!loggedMeals.has('Lunch') && currentHour >= 15) {
-    score -= 10;
-    addBreakdown('Missed Lunch', -10, 'penalty');
-  }
-  if (!loggedMeals.has('Dinner') && currentHour >= 21) {
-    score -= 10;
-    addBreakdown('Missed Dinner', -10, 'penalty');
-  }
+  // 2. Exact Meal Timing Logic (60 min strict buffer)
+  const mt = {
+     Breakfast: mealTimes?.Breakfast || '09:00',
+     Lunch: mealTimes?.Lunch || '13:00',
+     Dinner: mealTimes?.Dinner || '19:00'
+  };
+
+  const getMinutesOfDay = (timeStr) => {
+     if (!timeStr) return 0;
+     const [h, m] = timeStr.split(':').map(Number);
+     return h * 60 + (m || 0);
+  };
+
+  const currentMins = new Date().getHours() * 60 + new Date().getMinutes();
+
+  ['Breakfast', 'Lunch', 'Dinner'].forEach(mealName => {
+     const mealEntries = todayEntries.filter(e => e.mealType === mealName);
+     const targetMins = getMinutesOfDay(mt[mealName]);
+     
+     if (mealEntries.length > 0) {
+        // Find the earliest timestamp they logged this meal
+        const earliestTime = Math.min(...mealEntries.map(e => new Date(e.date).getTime()));
+        const firstLogDate = new Date(earliestTime);
+        const firstLogMins = firstLogDate.getHours() * 60 + firstLogDate.getMinutes();
+        const diffMins = firstLogMins - targetMins;
+
+        // If they logged it strictly > 60 mins past their Profile target
+        if (diffMins > 60) {
+           score -= 5;
+           addBreakdown(`Late ${mealName} (>60m)`, -5, 'penalty');
+        }
+     } else {
+        // Missing meal - only penalize if it is currently PAST the exact target + 60 minutes
+        if (currentMins > (targetMins + 60)) {
+           score -= 10;
+           addBreakdown(`Skipped ${mealName}`, -10, 'penalty');
+        }
+     }
+  });
 
   // 3. Late Night Snacking / Eating (Logged after 10:00 PM)
   // We use the entry's ISO string. Since users log in real-time, we check the 'HH'
