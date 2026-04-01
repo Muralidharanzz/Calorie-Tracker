@@ -27,45 +27,51 @@ export function calculateScore(todayEntries, dailyGoal, streak) {
   // 1. Total Volume
   const totalCals = todayEntries.reduce((acc, e) => acc + e.calories, 0);
   const pctOfGoal = totalCals / dailyGoal;
+  const currentHour = new Date().getHours();
 
-  // The Ghost Town: Logged less than 25% of goal (probably gave up tracking)
-  if (pctOfGoal < 0.25) {
-    score -= 40;
-    addBreakdown('Ghost Town (Extreme Under-tracking)', -40, 'penalty');
-  } 
-  // Under-eating but tracked something (25% to 85%)
-  else if (pctOfGoal < 0.85) {
-    // Lose ~1 pt for every 2% deviation away from the 85% lower bound
-    const dev = (0.85 - pctOfGoal) * 100;
-    const penalty = Math.round(dev * 0.5);
-    score -= penalty;
-    addBreakdown('Calorie Volume (Under Goal)', -penalty, 'penalty');
+  // Volume penalties for Under-tracking should only apply late in the day (after 6 PM)
+  if (currentHour >= 18) {
+    // The Ghost Town: Logged less than 25% of goal
+    if (pctOfGoal < 0.25) {
+      score -= 40;
+      addBreakdown('Ghost Town (Extreme Under-tracking)', -40, 'penalty');
+    } 
+    // Under-eating but tracked something (25% to 85%)
+    else if (pctOfGoal < 0.85) {
+      const dev = (0.85 - pctOfGoal) * 100;
+      const penalty = Math.round(dev * 0.5);
+      score -= penalty;
+      addBreakdown('Calorie Volume (Under Goal)', -penalty, 'penalty');
+    }
   }
-  // Perfect Zone: 85% to 105% (No penalty)
-  else if (pctOfGoal <= 1.05) {
+
+  // Perfect Zone Check (Applies anytime they hit it)
+  if (pctOfGoal >= 0.85 && pctOfGoal <= 1.05) {
     addBreakdown('Perfect Calorie Range', 0, 'bonus');
   }
-  // Overeating: > 105%
-  else {
-    // Lose ~1 pt for every 2% over the 105% upper bound
-    // Note: Blowout (>200%) will cap score hard eventually
+  // Overeating: > 105% (Applies anytime)
+  if (pctOfGoal > 1.05) {
     const dev = (pctOfGoal - 1.05) * 100;
     const penalty = Math.round(dev * 0.5);
-    // Cap volume overage penalty at -50 max
     const finalPenalty = Math.min(penalty, 50);
     score -= finalPenalty;
     addBreakdown('Calorie Volume (Exceeded)', -finalPenalty, 'penalty');
   }
 
-  // 2. Meal Balance (OMAD / Missing Meals)
+  // 2. Meal Balance (OMAD / Missing Meals) - Time Aware
   const loggedMeals = new Set(todayEntries.map(e => e.mealType));
-  if (!loggedMeals.has('Breakfast')) {
+  
+  if (!loggedMeals.has('Breakfast') && currentHour >= 10) {
     score -= 10;
     addBreakdown('Skipped Breakfast', -10, 'penalty');
   }
-  if (!loggedMeals.has('Lunch') && !loggedMeals.has('Dinner')) {
+  if (!loggedMeals.has('Lunch') && currentHour >= 15) {
     score -= 10;
-    addBreakdown('Missed Lunch & Dinner', -10, 'penalty');
+    addBreakdown('Missed Lunch', -10, 'penalty');
+  }
+  if (!loggedMeals.has('Dinner') && currentHour >= 21) {
+    score -= 10;
+    addBreakdown('Missed Dinner', -10, 'penalty');
   }
 
   // 3. Late Night Snacking / Eating (Logged after 10:00 PM)

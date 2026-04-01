@@ -330,10 +330,6 @@ p {
   box-shadow: 0 0 0 3px rgba(0, 230, 118, 0.15);
 }
 
-/* Calorie input — slightly larger than base, same weight as Food name */
-.input-calories {
-  font-size: 18px;
-}
 
 /* ══════════════════════
    MEAL TYPE BUTTONS
