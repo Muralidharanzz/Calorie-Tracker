@@ -150,7 +150,7 @@ function App() {
         {activeTab === 'LOG' && (
           <>
             <Dashboard user={store.user} entries={store.entries} />
-            <WaterTracker />
+            <WaterTracker user={store.user} />
             <FoodLogger onAddEntry={store.addEntry} recentFoods={store.recentFoods} />
           </>
         )}
@@ -175,6 +175,7 @@ function App() {
             updateUserGoal={store.updateUserGoal}
             updateCompanionPersona={store.updateCompanionPersona}
             updateMealTimes={store.updateMealTimes}
+            updateWaterSettings={store.updateWaterSettings}
             onNavigateHistory={() => navigate('HISTORY')}
           />
         )}

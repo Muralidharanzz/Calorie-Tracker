@@ -1,32 +1,32 @@
 import React, { useMemo } from 'react';
 
 /**
- * Calculates and displays the current daily logging streak (consecutive days with ≥1 entry).
+ * Calculates current daily logging streak.
  */
-const StreakCounter = ({ entries }) => {
-  const streak = useMemo(() => {
-    if (!entries.length) return 0;
+export const getCurrentStreak = (entries) => {
+  if (!entries || !entries.length) return 0;
+  
+  const datesWithEntries = new Set(
+    entries.map(e => e.date.split('T')[0])
+  );
 
-    // Build a set of unique dates that have entries
-    const datesWithEntries = new Set(
-      entries.map(e => e.date.split('T')[0])
-    );
+  let count = 0;
+  const d = new Date();
 
-    // Walk backwards from today counting consecutive days
-    let count = 0;
-    const d = new Date();
-
-    while (true) {
-      const dateStr = d.toISOString().split('T')[0];
-      if (datesWithEntries.has(dateStr)) {
-        count++;
-        d.setDate(d.getDate() - 1);
-      } else {
-        break;
-      }
+  while (true) {
+    const dateStr = d.toISOString().split('T')[0];
+    if (datesWithEntries.has(dateStr)) {
+      count++;
+      d.setDate(d.getDate() - 1);
+    } else {
+      break;
     }
-    return count;
-  }, [entries]);
+  }
+  return count;
+};
+
+const StreakCounter = ({ entries }) => {
+  const streak = useMemo(() => getCurrentStreak(entries), [entries]);
 
   if (streak === 0) return null;
 

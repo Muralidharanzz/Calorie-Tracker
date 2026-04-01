@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
-const Profile = ({ user, updateUserName, updateUserGoal, updateCompanionPersona, updateMealTimes, onNavigateHistory }) => {
+const Profile = ({ user, updateUserName, updateUserGoal, updateCompanionPersona, updateMealTimes, updateWaterSettings, onNavigateHistory }) => {
   const [name, setName] = useState(user.userName || '');
   const [goal, setGoal] = useState(user.dailyCalorieGoal);
   const [persona, setPersona] = useState(user.companionPersona || 'balanced');
   const [mealTimes, setMealTimes] = useState(user.mealTimes || { Breakfast: '09:00', Lunch: '13:00', Dinner: '19:00' });
+  const [waterType, setWaterType] = useState(user.waterGoalType || 'glass');
+  const [waterGoal, setWaterGoal] = useState(user.waterGoal || 8);
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
@@ -12,6 +14,8 @@ const Profile = ({ user, updateUserName, updateUserGoal, updateCompanionPersona,
     setGoal(user.dailyCalorieGoal);
     setPersona(user.companionPersona || 'balanced');
     setMealTimes(user.mealTimes || { Breakfast: '09:00', Lunch: '13:00', Dinner: '19:00' });
+    setWaterType(user.waterGoalType || 'glass');
+    setWaterGoal(user.waterGoal || 8);
   }, [user]);
 
   const handleSave = () => {
@@ -19,6 +23,7 @@ const Profile = ({ user, updateUserName, updateUserGoal, updateCompanionPersona,
     updateUserGoal(Number(goal));
     updateCompanionPersona(persona);
     updateMealTimes(mealTimes);
+    if (updateWaterSettings) updateWaterSettings(waterType, Number(waterGoal));
     setSuccess(true);
     setTimeout(() => setSuccess(false), 2000);
   };
@@ -49,6 +54,25 @@ const Profile = ({ user, updateUserName, updateUserGoal, updateCompanionPersona,
             className="input input-calories"
             value={goal}
             onChange={(e) => setGoal(e.target.value)}
+          />
+        </div>
+
+        <div className="input-group">
+          <label>Hydration Container</label>
+          <div className="meal-types">
+            <button className={`meal-btn ${waterType === 'glass'  ? 'active' : ''}`} onClick={() => setWaterType('glass')}>🥛 Standard Glass</button>
+            <button className={`meal-btn ${waterType === 'bottle' ? 'active' : ''}`} onClick={() => setWaterType('bottle')}>🍾 1L Bottle</button>
+          </div>
+        </div>
+
+        <div className="input-group">
+          <label>Hydration Target (Daily {waterType === 'glass' ? 'Glasses' : 'Bottles'})</label>
+          <input
+            type="number"
+            inputMode="numeric"
+            className="input input-calories"
+            value={waterGoal}
+            onChange={(e) => setWaterGoal(e.target.value)}
           />
         </div>
 

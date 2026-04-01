@@ -1,20 +1,29 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
 import Companion from './Companion';
 import CalorieRing from './CalorieRing';
-import StreakCounter from './StreakCounter';
+import StreakCounter, { getCurrentStreak } from './StreakCounter';
 import MealRings from './MealRings';
 import Confetti from './Confetti';
 import { useCountUp } from '../hooks/useCountUp';
+import { calculateScore } from '../utils/scoreEngine';
 
 const Dashboard = ({ user, entries }) => {
   const today = new Date().toISOString().split('T')[0];
   const [showConfetti, setShowConfetti] = useState(false);
+  const [showScoreSheet, setShowScoreSheet] = useState(false);
   const prevGoalMet = useRef(false);
 
   const todayEntries = useMemo(() =>
     entries.filter(e => e.date.startsWith(today)),
     [entries, today]
   );
+
+  const currentStreak = useMemo(() => getCurrentStreak(entries), [entries]);
+
+  // Use the new 100-point engine
+  const { score, grade, color, breakdown } = useMemo(() => 
+    calculateScore(todayEntries, user.dailyCalorieGoal, currentStreak),
+  [todayEntries, user.dailyCalorieGoal, currentStreak]);
 
   const totalConsumed = useMemo(() =>
     todayEntries.reduce((acc, curr) => acc + Number(curr.calories), 0),
@@ -30,12 +39,7 @@ const Dashboard = ({ user, entries }) => {
   const animConsumed = useCountUp(totalConsumed);
   const animRemaining = useCountUp(Math.abs(remaining));
 
-  // Discipline Score
   const mealTypesLogged = new Set(todayEntries.map(e => e.mealType)).size;
-  let score = 10;
-  if (isExceeded) score -= 2;
-  if (mealTypesLogged < 3) score -= (3 - mealTypesLogged);
-  if (score < 0) score = 0;
 
   // Confetti when goal first hit
   useEffect(() => {
@@ -59,13 +63,19 @@ const Dashboard = ({ user, entries }) => {
             }
           </div>
           <div className="dashboard-badges">
-            <div className="discipline-score" style={{
-              background: score >= 8 ? 'rgba(0,230,118,0.12)' : score >= 5 ? 'rgba(255,193,7,0.12)' : 'rgba(255,82,82,0.12)',
-              borderColor: score >= 8 ? 'rgba(0,230,118,0.25)' : score >= 5 ? 'rgba(255,193,7,0.25)' : 'rgba(255,82,82,0.25)',
-              color: score >= 8 ? 'var(--accent-color)' : score >= 5 ? '#ffc107' : 'var(--danger-color)'
-            }}>
-              Score: {score}/10 🔥
-            </div>
+            <button 
+              className="grade-badge" 
+              style={{
+                borderColor: color,
+                background: `${color}15`,
+                color: color,
+                boxShadow: `0 0 12px ${color}30`
+              }}
+              onClick={() => setShowScoreSheet(true)}
+            >
+              <span className="grade-letter">{grade}</span>
+              <span className="grade-score">{score}</span>
+            </button>
             <StreakCounter entries={entries} />
           </div>
         </div>
@@ -115,6 +125,31 @@ const Dashboard = ({ user, entries }) => {
           user={user}
         />
       </section>
+
+      {/* Score Breakdown Bottom Sheet */}
+      {showScoreSheet && (
+        <div className="score-sheet-backdrop" onClick={() => setShowScoreSheet(false)}>
+          <div className="score-sheet-content" onClick={e => e.stopPropagation()}>
+            <div className="score-sheet-handle" />
+            <h3 className="score-sheet-title">
+              Health Grade: <span style={{ color }}>{grade}</span> ({score})
+            </h3>
+            <div className="score-sheet-breakdown">
+              {breakdown.map((item, i) => (
+                <div key={i} className="score-sheet-row">
+                  <span className="score-sheet-label">{item.label}</span>
+                  <span className={`score-sheet-val ${item.type}`}>
+                    {item.points > 0 ? `+${item.points}` : item.points}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <button className="btn-secondary" onClick={() => setShowScoreSheet(false)} style={{ marginTop: '20px' }}>
+              Got it
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 };

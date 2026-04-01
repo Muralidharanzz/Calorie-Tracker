@@ -12,13 +12,19 @@ const defaultUser = {
   userName: '',
   dailyCalorieGoal: 2000,
   companionPersona: 'balanced', // 'balanced', 'strict', 'cheerleader'
-  mealTimes: { Breakfast: '09:00', Lunch: '13:00', Dinner: '19:00' }
+  mealTimes: { Breakfast: '09:00', Lunch: '13:00', Dinner: '19:00' },
+  waterGoalType: 'glass', // 'glass' or 'bottle'
+  waterGoal: 8
 };
 
 export function useDataStore() {
   const [user, setUser] = useState(() => {
     const stored = localStorage.getItem(STORAGE_KEYS.USER);
-    return stored ? JSON.parse(stored) : defaultUser;
+    if (!stored) return defaultUser;
+    
+    // Merge stored with defaults to handle new fields for existing users
+    const parsed = JSON.parse(stored);
+    return { ...defaultUser, ...parsed };
   });
 
   const [entries, setEntries] = useState(() => {
@@ -59,6 +65,10 @@ export function useDataStore() {
 
   const updateMealTimes = (times) => {
     setUser(prev => ({ ...prev, mealTimes: times }));
+  };
+
+  const updateWaterSettings = (type, amount) => {
+    setUser(prev => ({ ...prev, waterGoalType: type, waterGoal: amount }));
   };
 
   const addEntry = (entry) => {
@@ -104,6 +114,7 @@ export function useDataStore() {
     updateUserGoal,
     updateCompanionPersona,
     updateMealTimes,
+    updateWaterSettings,
     addEntry,
     getEntriesForDate,
     deleteEntry,
