@@ -22,6 +22,15 @@
   --border-radius-md: 16px;
   --border-radius-sm: 10px;
   --transition-speed: 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* ── Typography scale (Redmi 10A 360px) ── */
+  --text-xs:   11px;   /* caps labels, badges          */
+  --text-sm:   13px;   /* secondary info, descriptions */
+  --text-base: 15px;   /* body text, list items        */
+  --text-md:   16px;   /* inputs (≥16 avoids zoom)     */
+  --text-lg:   18px;   /* card section headings (h2)   */
+  --text-xl:   20px;   /* page-level headings          */
+  --text-2xl:  38px;   /* calorie big numbers          */
 }
 
 /* ── Reset ── */
@@ -46,12 +55,42 @@ body {
   background-image: var(--bg-gradient);
   background-attachment: fixed;
   color: var(--text-primary);
+  /* Base font — all relative sizes inherit from here */
+  font-size: var(--text-base);
+  line-height: 1.55;
   min-height: 100vh;
   min-height: 100dvh;
   -webkit-font-smoothing: antialiased;
-  /* KEY FIX: no flex centering that can break on Android — use margin auto instead */
   width: 100%;
   overflow-x: hidden;
+}
+
+/* Global heading reset — kill browser defaults */
+h1, h2, h3, h4, h5, h6 {
+  font-family: inherit;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-primary);
+  margin: 0;
+}
+h1 { font-size: var(--text-xl);  font-weight: 800; }
+h2 { font-size: var(--text-lg);  font-weight: 700; } /* card section titles */
+h3 { font-size: var(--text-base); font-weight: 700; }
+h4 { font-size: var(--text-sm);  font-weight: 700; }
+
+label {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+  color: var(--text-secondary);
+  display: block;
+  margin-bottom: 8px;
+}
+
+p {
+  font-size: var(--text-base);
+  line-height: 1.6;
 }
 
 /* ── App shell — full width, max capped ── */
@@ -291,9 +330,10 @@ body {
   box-shadow: 0 0 0 3px rgba(0, 230, 118, 0.15);
 }
 
+/* Calorie input — slightly larger than base but not jarring */
 .input-calories {
-  font-size: 22px;
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: 600;
 }
 
 /* ══════════════════════

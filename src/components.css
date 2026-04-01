@@ -7,7 +7,77 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 16px;
 }
+
+/* ── Input group spacing ── */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 18px;
+}
+
+/* ── Food Logger / sections heading ── */
+.food-logger h2,
+.dashboard h2 {
+  margin-bottom: 14px;
+}
+
+/* ══════════════════════
+   PROFILE PAGE
+══════════════════════ */
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 16px;
+}
+
+.profile-card h2 {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(0, 230, 118, 0.1);
+}
+
+.profile-desc {
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.profile-full-btn {
+  width: 100%;
+  padding: 13px;
+  text-align: center;
+}
+
+.profile-card--muted {
+  opacity: 0.65;
+}
+
+/* Reminder times grid */
+.reminder-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.reminder-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.reminder-meal-label {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--text-secondary);
+}
+
 
 .fast-text {
   font-size: 12px;
