@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 
 const MEAL_TYPES = ['Breakfast', 'Lunch', 'Dinner', 'Snacks'];
 
@@ -6,44 +6,48 @@ const FoodLogger = ({ onAddEntry, recentFoods }) => {
   const [foodName, setFoodName] = useState('');
   const [calories, setCalories] = useState('');
   const [mealType, setMealType] = useState('Breakfast');
-  
+  const [saved, setSaved] = useState(false);
+  const [ripple, setRipple] = useState(null); // { meal, x, y }
+
   const calRef = useRef(null);
 
-  // Auto-fill from recent foods
   const handleRecentClick = (food) => {
     setFoodName(food.foodName);
     setCalories(food.calories);
-    // Auto-focus on calorie field for super fast adjustments? Or just user taps "Save"
   };
 
   const handleSave = () => {
     if (!foodName || !calories) return;
 
-    onAddEntry({
-      foodName,
-      calories: Number(calories),
-      mealType
-    });
+    onAddEntry({ foodName, calories: Number(calories), mealType });
 
-    // Reset but maybe keep the current mealType unless they want to change it
     setFoodName('');
     setCalories('');
-    
-    // Auto-focus back on foodName for the next item
+
+    // Success pulse
+    setSaved(true);
+    setTimeout(() => setSaved(false), 1600);
+  };
+
+  // Ripple on meal button tap
+  const handleMealTap = (type, e) => {
+    setMealType(type);
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    setRipple({ meal: type, x, y });
+    setTimeout(() => setRipple(null), 500);
   };
 
   return (
     <section className="food-logger">
-      <div className="flex-between">
-        <h2>Log Food</h2>
-        <span className="fast-text">⚡ ultra-fast</span>
-      </div>
+      <h2>Log Food</h2>
 
       {recentFoods.length > 0 && (
         <div className="recent-foods-row">
           {recentFoods.slice(0, 5).map((food, idx) => (
-            <div 
-              key={idx} 
+            <div
+              key={idx}
               className="recent-chip"
               onClick={() => handleRecentClick(food)}
             >
@@ -55,21 +59,21 @@ const FoodLogger = ({ onAddEntry, recentFoods }) => {
       )}
 
       <div className="input-group">
-        <input 
-          type="text" 
-          placeholder="Food name" 
-          className="input" 
+        <input
+          type="text"
+          placeholder="Food name"
+          className="input"
           value={foodName}
           onChange={(e) => setFoodName(e.target.value)}
         />
       </div>
-      
+
       <div className="input-group">
-        <input 
-          type="number" 
-          inputMode="numeric" 
-          placeholder="Calories" 
-          className="input input-calories" 
+        <input
+          type="number"
+          inputMode="numeric"
+          placeholder="Calories"
+          className="input input-calories"
           value={calories}
           onChange={(e) => setCalories(e.target.value)}
           ref={calRef}
@@ -78,18 +82,29 @@ const FoodLogger = ({ onAddEntry, recentFoods }) => {
 
       <div className="meal-types">
         {MEAL_TYPES.map(type => (
-          <button 
+          <button
             key={type}
             className={`meal-btn ${mealType === type ? 'active' : ''}`}
-            onClick={() => setMealType(type)}
+            onClick={(e) => handleMealTap(type, e)}
+            style={{ position: 'relative', overflow: 'hidden' }}
           >
             {type}
+            {/* Ripple */}
+            {ripple?.meal === type && (
+              <span
+                className="meal-ripple"
+                style={{ left: ripple.x, top: ripple.y }}
+              />
+            )}
           </button>
         ))}
       </div>
 
-      <button className="btn-primary" onClick={handleSave}>
-        Save & Add Another
+      <button
+        className={`btn-primary ${saved ? 'btn-saved' : ''}`}
+        onClick={handleSave}
+      >
+        {saved ? '✓ Added!' : 'Save & Add Another'}
       </button>
     </section>
   );

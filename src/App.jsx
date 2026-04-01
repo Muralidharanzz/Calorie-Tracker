@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useDataStore } from './hooks/useDataStore'
 import Dashboard from './components/Dashboard'
 import FoodLogger from './components/FoodLogger'
@@ -6,42 +6,81 @@ import DailyHistory from './components/DailyHistory'
 import Insights from './components/Insights'
 import Profile from './components/Profile'
 import SmartNotifier from './components/SmartNotifier'
+import WaterTracker from './components/WaterTracker'
 
 const PAGE_LABELS = {
-  LOG: 'Today\'s Log',
+  LOG: "Today's Log",
   HISTORY: 'History',
   INSIGHTS: 'Insights',
   PROFILE: 'Profile',
 };
 
 const menuItems = [
-  { id: 'LOG',      icon: '🥗', label: 'Today\'s Log',  desc: 'Log meals & track calories' },
-  { id: 'HISTORY',  icon: '📅', label: 'History',        desc: 'Browse past entries'         },
-  { id: 'INSIGHTS', icon: '📊', label: 'Insights',       desc: 'Trends & analytics'          },
-  { id: 'PROFILE',  icon: '👤', label: 'Profile',        desc: 'Settings & goals'            },
+  { id: 'LOG',      icon: '🥗', label: "Today's Log",  desc: 'Log meals & track calories' },
+  { id: 'HISTORY',  icon: '📅', label: 'History',       desc: 'Browse past entries'        },
+  { id: 'INSIGHTS', icon: '📊', label: 'Insights',      desc: 'Trends & analytics'         },
+  { id: 'PROFILE',  icon: '👤', label: 'Profile',       desc: 'Settings & goals'           },
 ];
+
+/* ── Pull-to-refresh ────────────────────────────────── */
+const PULL_THRESHOLD = 72;
 
 function App() {
   const store = useDataStore();
   const [activeTab, setActiveTab] = useState('LOG');
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // Close menu on back-swipe / escape
+  // Pull-to-refresh state
+  const [pullY, setPullY] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
+  const touchStartY = useRef(null);
+  const mainRef = useRef(null);
+
+  // Close menu on Escape
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') setMenuOpen(false); };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  // Prevent body scroll when menu is open
+  // Prevent body scroll when menu open
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [menuOpen]);
 
+  // Pull-to-refresh handlers
+  const onTouchStart = (e) => {
+    if (mainRef.current?.scrollTop === 0) {
+      touchStartY.current = e.touches[0].clientY;
+    }
+  };
+  const onTouchMove = (e) => {
+    if (touchStartY.current === null) return;
+    const dy = e.touches[0].clientY - touchStartY.current;
+    if (dy > 0 && mainRef.current?.scrollTop === 0) {
+      setPullY(Math.min(dy * 0.5, PULL_THRESHOLD + 20));
+    }
+  };
+  const onTouchEnd = () => {
+    if (pullY >= PULL_THRESHOLD) {
+      setRefreshing(true);
+      // Simulate refresh — just add a short delay then collapse
+      setTimeout(() => {
+        setRefreshing(false);
+        setPullY(0);
+        touchStartY.current = null;
+      }, 900);
+    } else {
+      setPullY(0);
+      touchStartY.current = null;
+    }
+  };
+
   const navigate = (id) => {
     setActiveTab(id);
     setMenuOpen(false);
+    if (mainRef.current) mainRef.current.scrollTop = 0;
   };
 
   return (
@@ -50,15 +89,11 @@ function App() {
 
       {/* ── Header ── */}
       <header className="header">
-        <div className="logo-container" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <img src="/caltos-icon.svg" alt="Caltos Logo" style={{ width: '30px', height: '30px' }} />
+        <div className="logo-container">
+          <img src="/caltos-icon.svg" alt="Caltos Logo" style={{ width: 28, height: 28 }} />
           <h1>Caltos</h1>
         </div>
-
-        {/* Current page label */}
         <span className="header-page-label">{PAGE_LABELS[activeTab]}</span>
-
-        {/* Hamburger */}
         <button
           className={`hamburger-btn ${menuOpen ? 'open' : ''}`}
           onClick={() => setMenuOpen(v => !v)}
@@ -68,10 +103,8 @@ function App() {
         </button>
       </header>
 
-      {/* ── Drawer overlay (backdrop) ── */}
-      {menuOpen && (
-        <div className="drawer-backdrop" onClick={() => setMenuOpen(false)} />
-      )}
+      {/* ── Drawer backdrop ── */}
+      {menuOpen && <div className="drawer-backdrop" onClick={() => setMenuOpen(false)} />}
 
       {/* ── Bottom-sheet drawer ── */}
       <div className={`nav-drawer ${menuOpen ? 'open' : ''}`}>
@@ -95,11 +128,29 @@ function App() {
         </nav>
       </div>
 
+      {/* ── Pull-to-refresh indicator ── */}
+      <div
+        className={`ptr-indicator ${refreshing ? 'ptr-refreshing' : ''}`}
+        style={{ height: refreshing ? 48 : pullY > 0 ? pullY * 0.6 : 0 }}
+      >
+        <div className={`ptr-spinner ${refreshing ? 'spinning' : ''}`}>
+          {refreshing ? '↻' : pullY >= PULL_THRESHOLD ? '↑ Release' : '↓ Pull to refresh'}
+        </div>
+      </div>
+
       {/* ── Main scrollable content ── */}
-      <main className="main-content">
+      <main
+        className="main-content"
+        ref={mainRef}
+        style={{ overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
         {activeTab === 'LOG' && (
           <>
             <Dashboard user={store.user} entries={store.entries} />
+            <WaterTracker />
             <FoodLogger onAddEntry={store.addEntry} recentFoods={store.recentFoods} />
           </>
         )}
@@ -129,7 +180,7 @@ function App() {
         )}
       </main>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

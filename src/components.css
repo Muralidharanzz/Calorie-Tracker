@@ -435,12 +435,377 @@
    DISCIPLINE SCORE BADGE
 ══════════════════════ */
 .discipline-score {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
-  color: var(--accent-color);
-  background: rgba(0,230,118,0.12);
-  padding: 6px 12px;
+  padding: 5px 10px;
   border-radius: 20px;
-  border: 1px solid rgba(0,230,118,0.2);
+  border: 1px solid;
   white-space: nowrap;
+  transition: all 0.3s ease;
 }
+
+/* ══════════════════════
+   DASHBOARD LAYOUT
+══════════════════════ */
+.dashboard-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  gap: 8px;
+}
+
+.greeting-name {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.dashboard-badges {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.dashboard-metrics-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 4px;
+}
+
+.dashboard-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.calorie-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 1px;
+}
+
+/* ══════════════════════
+   STREAK BADGE
+══════════════════════ */
+.streak-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 171, 0, 0.1);
+  border: 1px solid rgba(255,171,0,0.25);
+  border-radius: 20px;
+  padding: 4px 10px;
+  animation: streakBounce 0.6s cubic-bezier(0.2, 0.8, 0.2, 1.4) both;
+}
+
+@keyframes streakBounce {
+  0%   { transform: scale(0.5); opacity: 0; }
+  70%  { transform: scale(1.1); }
+  100% { transform: scale(1);   opacity: 1; }
+}
+
+.streak-flame { font-size: 16px; }
+.streak-count { font-size: 14px; font-weight: 800; color: #ffab00; }
+.streak-label { font-size: 11px; color: rgba(255,171,0,0.7); font-weight: 600; }
+
+/* ══════════════════════
+   CALORIE RING CENTER
+══════════════════════ */
+.ring-consumed {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: -1.5px;
+  line-height: 1;
+  color: var(--text-primary);
+}
+.ring-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+.ring-unit {
+  font-size: 10px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ══════════════════════
+   PROGRESS BAR SHIMMER
+══════════════════════ */
+.progress-shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,0.3) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmerMove 2s linear infinite;
+  border-radius: inherit;
+}
+
+@keyframes shimmerMove {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.progress-bar { position: relative; overflow: hidden; }
+
+/* ══════════════════════
+   MEAL RINGS
+══════════════════════ */
+.meal-rings-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  justify-content: flex-start;
+}
+
+.meal-ring-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.meal-ring-label {
+  font-size: 10px;
+  color: var(--text-secondary);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.meal-ring-cals {
+  font-size: 11px;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+/* ══════════════════════
+   MEAL BUTTON RIPPLE
+══════════════════════ */
+.meal-ripple {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  transform: translate(-50%, -50%) scale(0);
+  animation: rippleAnim 0.5s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes rippleAnim {
+  to { transform: translate(-50%,-50%) scale(2.5); opacity: 0; }
+}
+
+/* ══════════════════════
+   SAVE SUCCESS STATE
+══════════════════════ */
+.btn-saved {
+  background: linear-gradient(135deg, #00c853, #00e676) !important;
+  animation: savePulse 0.4s ease;
+}
+
+@keyframes savePulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+
+/* ══════════════════════
+   WEEKLY CHART
+══════════════════════ */
+.weekly-chart-wrapper {
+  background: rgba(0,230,118,0.03);
+  border: 1px solid rgba(0,230,118,0.1);
+  border-radius: var(--border-radius-lg);
+  padding: 16px 14px 10px;
+  margin-bottom: 18px;
+  overflow: hidden;
+}
+
+.chart-title {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+}
+
+/* ══════════════════════
+   SWIPE TO DELETE
+══════════════════════ */
+.swipe-entry { padding: 0 !important; }
+
+.swipe-delete-bg {
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 80px;
+  background: linear-gradient(135deg, #ff5252, #d50000);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+}
+
+.swipe-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  min-height: 56px;
+  gap: 12px;
+  background: rgba(0,230,118,0.03);
+  border-radius: var(--border-radius-md);
+  width: 100%;
+  will-change: transform;
+}
+
+/* ══════════════════════
+   WATER TRACKER
+══════════════════════ */
+.water-tracker {
+  padding: 18px !important;
+}
+
+.water-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.water-title {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.water-count {
+  font-size: var(--text-sm);
+  color: #29b6f6;
+  font-weight: 700;
+  background: rgba(41,182,246,0.1);
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(41,182,246,0.2);
+}
+
+.water-glasses-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.water-glass {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  touch-action: manipulation;
+  transition: transform 0.2s ease;
+  border-radius: 6px;
+}
+
+.water-glass:active { transform: scale(0.88); }
+
+.water-glass.filled {
+  animation: glassFill 0.3s ease;
+  filter: drop-shadow(0 0 6px rgba(41,182,246,0.5));
+}
+
+@keyframes glassFill {
+  0%   { transform: scale(0.85); }
+  60%  { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.water-bar-container {
+  height: 6px;
+  background: rgba(41,182,246,0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.water-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #29b6f6, #0288d1);
+  border-radius: 3px;
+  box-shadow: 0 0 10px rgba(41,182,246,0.4);
+  transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.water-complete-msg {
+  text-align: center;
+  font-size: var(--text-sm);
+  color: #29b6f6;
+  margin-top: 10px;
+  animation: fadeInCard 0.4s ease both;
+}
+
+/* ══════════════════════
+   PULL TO REFRESH
+══════════════════════ */
+.ptr-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: height 0.3s ease;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+}
+
+.ptr-indicator.ptr-refreshing {
+  color: var(--accent-color);
+}
+
+.ptr-spinner {
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.ptr-spinner.spinning {
+  animation: spinAnim 0.8s linear infinite;
+}
+
+@keyframes spinAnim {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ══════════════════════
+   EMPTY STATE
+══════════════════════ */
+.empty-state {
+  text-align: center;
+  padding: 32px 20px;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.empty-icon { font-size: 40px; }
+
+.empty-hint {
+  font-size: var(--text-xs);
+  opacity: 0.6;
+  margin-top: 4px;
+}
+
