@@ -19,7 +19,7 @@ const WeeklyChart = ({ entries, goal }) => {
     return days;
   }, [entries]);
 
-  const maxVal = Math.max(...bars.map(b => b.total), goal, 1);
+  const maxVal = Math.max(...bars.map(b => b.total), goal * 1.2, 1);
 
   const WIDTH = 320;
   const HEIGHT = 120;
@@ -87,23 +87,24 @@ const WeeklyChart = ({ entries, goal }) => {
           );
         })}
 
-        {/* Goal line & Friendly Badge (drawn on top of bars) */}
+        {/* Goal line & Friendly Badge (centered above line) */}
         <line
           x1={0} y1={GOAL_Y}
-          x2={WIDTH - 76} y2={GOAL_Y}
+          x2={WIDTH} y2={GOAL_Y}
           stroke="rgba(0,230,118,0.5)"
           strokeWidth={1.5}
           strokeDasharray="6 4"
         />
         <rect
-          x={WIDTH - 72} y={GOAL_Y - 9}
-          width={72} height={18}
-          rx={9}
-          fill="#112b1c"
-          stroke="rgba(0,230,118,0.4)"
+          x={WIDTH / 2 - 36} y={GOAL_Y - 20}
+          width={72} height={16}
+          rx={8}
+          fill="rgba(17, 43, 28, 0.85)"
+          stroke="#00c853"
           strokeWidth={1}
+          style={{ backdropFilter: 'blur(4px)' }}
         />
-        <text x={WIDTH - 36} y={GOAL_Y + 3} fill="#00e676"
+        <text x={WIDTH / 2} y={GOAL_Y - 9} fill="#00e676"
           fontSize="8" fontWeight="700" textAnchor="middle">
           Goal: {goal}
         </text>
