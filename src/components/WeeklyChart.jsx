@@ -29,7 +29,20 @@ const WeeklyChart = ({ entries, goal }) => {
 
   return (
     <div className="weekly-chart-wrapper">
-      <h3 className="chart-title">7-Day Overview</h3>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 0 16px 4px' }}>
+        <h3 className="chart-title" style={{ margin: 0, padding: 0 }}>7-DAY OVERVIEW</h3>
+        <div style={{
+          padding: '4px 10px',
+          background: 'rgba(17, 43, 28, 0.85)',
+          border: '1px solid #00c853',
+          borderRadius: 12,
+          color: '#00e676',
+          fontSize: '0.75rem',
+          fontWeight: 700,
+        }}>
+          Goal: {goal}
+        </div>
+      </div>
       <svg
         viewBox={`0 0 ${WIDTH} ${HEIGHT + 28}`}
         width="100%"
@@ -87,7 +100,7 @@ const WeeklyChart = ({ entries, goal }) => {
           );
         })}
 
-        {/* Goal line & Friendly Badge (centered above line) */}
+        {/* Goal line */}
         <line
           x1={0} y1={GOAL_Y}
           x2={WIDTH} y2={GOAL_Y}
@@ -95,19 +108,6 @@ const WeeklyChart = ({ entries, goal }) => {
           strokeWidth={1.5}
           strokeDasharray="6 4"
         />
-        <rect
-          x={WIDTH / 2 - 36} y={GOAL_Y - 20}
-          width={72} height={16}
-          rx={8}
-          fill="rgba(17, 43, 28, 0.85)"
-          stroke="#00c853"
-          strokeWidth={1}
-          style={{ backdropFilter: 'blur(4px)' }}
-        />
-        <text x={WIDTH / 2} y={GOAL_Y - 9} fill="#00e676"
-          fontSize="8" fontWeight="700" textAnchor="middle">
-          Goal: {goal}
-        </text>
       </svg>
     </div>
   );
