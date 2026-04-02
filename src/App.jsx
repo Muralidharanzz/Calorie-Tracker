@@ -126,6 +126,38 @@ function App() {
             </button>
           ))}
         </nav>
+
+        {/* ── Maverick Premium Badge ── */}
+        <div style={{ marginTop: 'auto', padding: '32px 16px 24px', textAlign: 'center' }}>
+          <p style={{
+            margin: 0,
+            fontSize: '0.75rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.2em',
+            color: 'rgba(255,255,255,0.4)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 8
+          }}>
+            <span style={{ width: 16, height: 1, background: 'rgba(255,255,255,0.2)' }} />
+            Designed By
+            <span style={{ width: 16, height: 1, background: 'rgba(255,255,255,0.2)' }} />
+          </p>
+          <p style={{
+            margin: '8px 0 0 0',
+            fontSize: '1.4rem',
+            fontWeight: 900,
+            fontFamily: 'Inter, system-ui, sans-serif',
+            background: 'linear-gradient(135deg, #FFD700 0%, #FDB931 40%, #FFF3A0 60%, #FFD700 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            letterSpacing: '0.08em',
+            filter: 'drop-shadow(0 2px 8px rgba(253, 185, 49, 0.3))'
+          }}>
+            MAVERICK
+          </p>
+        </div>
       </div>
 
       {/* ── Pull-to-refresh indicator ── */}

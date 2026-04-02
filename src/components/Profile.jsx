@@ -131,10 +131,46 @@ const Profile = ({ user, updateUserName, updateUserGoal, updateCompanionPersona,
       </div>
 
       {/* ── About card ── */}
-      <div className="dashboard profile-card profile-card--muted">
-        <h2>About Caltos</h2>
-        <p className="profile-desc">
-          A premium, offline-first calorie tracking companion. Your data is stored locally on your device for absolute privacy and speed.
+      <div className="dashboard profile-card" style={{ 
+        background: 'linear-gradient(180deg, rgba(30,30,35,0.7) 0%, rgba(20,20,25,0.9) 100%)',
+        border: '1px solid rgba(255, 215, 0, 0.15)',
+        textAlign: 'center',
+        padding: '32px 20px',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        {/* Subtle gold glow behind text */}
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '100%',
+          height: '100%',
+          background: 'radial-gradient(circle, rgba(253, 185, 49, 0.1) 0%, transparent 60%)',
+          pointerEvents: 'none'
+        }} />
+        
+        <h2 style={{ marginBottom: 4, color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.2em' }}>
+          Crafted With Precision
+        </h2>
+        
+        <p style={{
+          margin: '8px 0 16px 0',
+          fontSize: '2rem',
+          fontWeight: 900,
+          fontFamily: 'Inter, system-ui, sans-serif',
+          background: 'linear-gradient(135deg, #FFD700 0%, #FDB931 40%, #FFF3A0 60%, #FFD700 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          letterSpacing: '0.05em',
+          filter: 'drop-shadow(0 4px 12px rgba(253, 185, 49, 0.2))'
+        }}>
+          MAVERICK
+        </p>
+
+        <p className="profile-desc" style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem', lineHeight: 1.5, maxWidth: '90%', margin: '0 auto' }}>
+          An uncompromising, premium calorie tracking engine. Unmatched privacy, zero latency, and beautiful design.
         </p>
       </div>
 
