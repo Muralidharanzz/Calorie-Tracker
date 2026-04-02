@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 
-const Profile = ({ user, updateUserName, updateUserGoal, updateCompanionPersona, updateMealTimes, updateWaterSettings, onNavigateHistory }) => {
+const Profile = ({ user, updateUserName, updateUserGoal, updateCompanionPersona, updateMealTimes, updateWaterSettings, updateSugarControlMode, onNavigateHistory }) => {
   const [name, setName] = useState(user.userName || '');
   const [goal, setGoal] = useState(user.dailyCalorieGoal);
   const [persona, setPersona] = useState(user.companionPersona || 'balanced');
   const [mealTimes, setMealTimes] = useState(user.mealTimes || { Breakfast: '09:00', Lunch: '13:00', Dinner: '19:00' });
   const [waterType, setWaterType] = useState(user.waterGoalType || 'glass');
   const [waterGoal, setWaterGoal] = useState(user.waterGoal || 8);
+  const [sugarMode, setSugarMode] = useState(user.sugarControlMode || false);
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
@@ -16,6 +17,7 @@ const Profile = ({ user, updateUserName, updateUserGoal, updateCompanionPersona,
     setMealTimes(user.mealTimes || { Breakfast: '09:00', Lunch: '13:00', Dinner: '19:00' });
     setWaterType(user.waterGoalType || 'glass');
     setWaterGoal(user.waterGoal || 8);
+    setSugarMode(user.sugarControlMode || false);
   }, [user]);
 
   const handleSave = () => {
@@ -24,6 +26,7 @@ const Profile = ({ user, updateUserName, updateUserGoal, updateCompanionPersona,
     updateCompanionPersona(persona);
     updateMealTimes(mealTimes);
     if (updateWaterSettings) updateWaterSettings(waterType, Number(waterGoal));
+    if (updateSugarControlMode) updateSugarControlMode(sugarMode);
     setSuccess(true);
     setTimeout(() => setSuccess(false), 2000);
   };
@@ -100,6 +103,17 @@ const Profile = ({ user, updateUserName, updateUserGoal, updateCompanionPersona,
               </div>
             ))}
           </div>
+        </div>
+
+        <div className="input-group">
+          <label>Strict Sugar Cut Mode</label>
+          <div className="meal-types">
+            <button className={`meal-btn ${!sugarMode ? 'active' : ''}`} onClick={() => setSugarMode(false)}>🚫 Off</button>
+            <button className={`meal-btn ${sugarMode ? 'active' : ''}`} onClick={() => setSugarMode(true)}>🔥 On (Detect Sugar)</button>
+          </div>
+          <p className="profile-desc" style={{ marginTop: 8, fontSize: '0.8rem' }}>
+            When enabled, logs containing words like 'sugar', 'cake', 'soda' will heavily impact your daily health grade.
+          </p>
         </div>
 
         <button className="btn-primary" onClick={handleSave}>

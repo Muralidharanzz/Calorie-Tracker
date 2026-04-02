@@ -4,6 +4,7 @@ import CalorieRing from './CalorieRing';
 import StreakCounter, { getCurrentStreak } from './StreakCounter';
 import MealRings from './MealRings';
 import Confetti from './Confetti';
+import SugarJar from './SugarJar';
 import { useCountUp } from '../hooks/useCountUp';
 import { calculateScore } from '../utils/scoreEngine';
 
@@ -22,8 +23,8 @@ const Dashboard = ({ user, entries }) => {
 
   // Use the new 100-point engine with Meal Times
   const { score, grade, color, breakdown } = useMemo(() => 
-    calculateScore(todayEntries, user.dailyCalorieGoal, currentStreak, user.mealTimes),
-  [todayEntries, user.dailyCalorieGoal, currentStreak, user.mealTimes]);
+    calculateScore(todayEntries, user.dailyCalorieGoal, currentStreak, user.mealTimes, today, user),
+  [todayEntries, user.dailyCalorieGoal, currentStreak, user.mealTimes, today, user]);
 
   const totalConsumed = useMemo(() =>
     todayEntries.reduce((acc, curr) => acc + Number(curr.calories), 0),
@@ -113,6 +114,9 @@ const Dashboard = ({ user, entries }) => {
             <div className="progress-shimmer" />
           </div>
         </div>
+
+        {/* Sugar/Snack Jar */}
+        <SugarJar entries={entries} user={user} />
 
         {/* Meal breakdown rings */}
         <MealRings entries={entries} />

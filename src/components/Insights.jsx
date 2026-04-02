@@ -21,6 +21,33 @@ const getLongestStreak = (entries) => {
   return max;
 };
 
+const getSugarDetoxStreak = (entries) => {
+  const dates = [...new Set(entries.map(e => e.date.split('T')[0]))].sort();
+  if (!dates.length) return 0;
+  
+  const sugarKeywords = ['sugar', 'cake', 'candy', 'soda', 'coke', 'chocolate', 'cookie', 'ice cream', 'sweet', 'donut', 'syrup', 'dessert'];
+  
+  // Find which dates had sugar
+  const sugarDates = new Set();
+  entries.forEach(e => {
+    if (sugarKeywords.some(kw => e.foodName.toLowerCase().includes(kw))) {
+      sugarDates.add(e.date.split('T')[0]);
+    }
+  });
+
+  let max = 0, cur = 0;
+  for (let i = 0; i < dates.length; i++) {
+    const d = dates[i];
+    if (!sugarDates.has(d)) {
+      cur++;
+      max = Math.max(max, cur);
+    } else {
+      cur = 0;
+    }
+  }
+  return max;
+};
+
 const getTopFoods = (entries, n = 3) => {
   const freq = {};
   entries.forEach(e => {
@@ -84,8 +111,16 @@ const ScoreBreakdown = () => {
             <span className="score-pill red">–15</span>
           </div>
           <div className="score-row">
-            <span>Late-Night Eating (&gt;25% after 10PM)</span>
+            <span>Outside Active Hours (after 10PM, before 6AM)</span>
             <span className="score-pill red">–15</span>
+          </div>
+          <div className="score-row">
+            <span>Strict Sugar Cut Penalty (Mode On)</span>
+            <span className="score-pill red">–20</span>
+          </div>
+          <div className="score-row">
+            <span>Sugar-Free Day Bonus (Mode On)</span>
+            <span className="score-pill green">+10</span>
           </div>
           <div className="score-row">
             <span>Ghost Town (Under-tracking &lt;25%)</span>
@@ -128,12 +163,13 @@ const Insights = ({ entries, user }) => {
 
     const totalCalories = entries.reduce((s, e) => s + e.calories, 0);
     const longestStreak = getLongestStreak(entries);
+    const sugarDetoxStreak = getSugarDetoxStreak(entries);
     const topFoods = getTopFoods(entries);
 
     return {
       avgDaily, daysExceeded, daysUnder,
       consistencyPct, bestDay, bestDayCals,
-      totalDays: dates.length, totalCalories, longestStreak, topFoods
+      totalDays: dates.length, totalCalories, longestStreak, sugarDetoxStreak, topFoods
     };
   }, [entries, user.dailyCalorieGoal]);
 
@@ -151,7 +187,7 @@ const Insights = ({ entries, user }) => {
   const {
     avgDaily, daysExceeded, daysUnder, consistencyPct,
     bestDay, bestDayCals, totalDays, totalCalories,
-    longestStreak, topFoods
+    longestStreak, sugarDetoxStreak, topFoods
   } = stats;
 
   const avgVsGoal = Math.round(((avgDaily - user.dailyCalorieGoal) / user.dailyCalorieGoal) * 100);
@@ -193,6 +229,15 @@ const Insights = ({ entries, user }) => {
           value={`${longestStreak}d`}
           sub="consecutive days"
         />
+        {user?.sugarControlMode && (
+          <StatCard
+            icon="🛡️"
+            label="Sugar Detox"
+            value={`${sugarDetoxStreak}d`}
+            sub="longest streak"
+            accent
+          />
+        )}
       </div>
 
       {/* ── Consistency card ── */}

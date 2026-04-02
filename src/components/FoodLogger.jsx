@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 
 const MEAL_TYPES = ['Breakfast', 'Lunch', 'Dinner', 'Snacks'];
 
-const FoodLogger = ({ onAddEntry, recentFoods }) => {
+const FoodLogger = ({ onAddEntry, recentFoods, user }) => {
   const [foodName, setFoodName] = useState('');
   const [calories, setCalories] = useState('');
   const [mealType, setMealType] = useState('Breakfast');
@@ -11,6 +11,9 @@ const FoodLogger = ({ onAddEntry, recentFoods }) => {
 
   const calRef = useRef(null);
 
+  const currentHour = new Date().getHours();
+  const isOutsideActiveHours = currentHour >= 22 || currentHour < 6;
+
   const handleRecentClick = (food) => {
     setFoodName(food.foodName);
     setCalories(food.calories);
@@ -18,6 +21,17 @@ const FoodLogger = ({ onAddEntry, recentFoods }) => {
 
   const handleSave = () => {
     if (!foodName || !calories) return;
+
+    if (user?.sugarControlMode) {
+      const sugarKeywords = ['sugar', 'cake', 'candy', 'soda', 'coke', 'chocolate', 'cookie', 'ice cream', 'sweet', 'donut', 'syrup', 'dessert'];
+      const isSugary = sugarKeywords.some(kw => foodName.toLowerCase().includes(kw));
+      const hours = new Date().getHours();
+      
+      if (isSugary && hours >= 15) { // Afternoon/Late in the day
+        const confirm = window.confirm("Wait! This looks like a sugary treat. 🚫\n\nTry drinking a glass of water first to see if you're just thirsty.\n\nDo you still want to log this and take a health score penalty?");
+        if (!confirm) return;
+      }
+    }
 
     onAddEntry({ foodName, calories: Number(calories), mealType });
 
@@ -58,54 +72,63 @@ const FoodLogger = ({ onAddEntry, recentFoods }) => {
         </div>
       )}
 
-      <div className="input-group">
-        <input
-          type="text"
-          placeholder="Food name"
-          className="input"
-          value={foodName}
-          onChange={(e) => setFoodName(e.target.value)}
-        />
-      </div>
+      {isOutsideActiveHours ? (
+        <div className="empty-state" style={{ margin: '32px 0', padding: '24px', background: 'rgba(255,82,82,0.1)', borderRadius: 12 }}>
+          <span className="empty-icon">🌙</span>
+          <p style={{ color: '#ff5252', fontWeight: 600 }}>Logging Closed</p>
+          <p className="empty-hint">To help maintain healthy habits, you cannot log food between 10:00 PM and 6:00 AM.</p>
+        </div>
+      ) : (
+        <>
+          <div className="input-group">
+            <input
+              type="text"
+              placeholder="Food name"
+              className="input"
+              value={foodName}
+              onChange={(e) => setFoodName(e.target.value)}
+            />
+          </div>
 
-      <div className="input-group">
-        <input
-          type="number"
-          inputMode="numeric"
-          placeholder="Calories"
-          className="input input-calories"
-          value={calories}
-          onChange={(e) => setCalories(e.target.value)}
-          ref={calRef}
-        />
-      </div>
+          <div className="input-group">
+            <input
+              type="number"
+              inputMode="numeric"
+              placeholder="Calories"
+              className="input input-calories"
+              value={calories}
+              onChange={(e) => setCalories(e.target.value)}
+              ref={calRef}
+            />
+          </div>
 
-      <div className="meal-types">
-        {MEAL_TYPES.map(type => (
+          <div className="meal-types">
+            {MEAL_TYPES.map(type => (
+              <button
+                key={type}
+                className={`meal-btn ${mealType === type ? 'active' : ''}`}
+                onClick={(e) => handleMealTap(type, e)}
+                style={{ position: 'relative', overflow: 'hidden' }}
+              >
+                {type}
+                {ripple?.meal === type && (
+                  <span
+                    className="meal-ripple"
+                    style={{ left: ripple.x, top: ripple.y }}
+                  />
+                )}
+              </button>
+            ))}
+          </div>
+
           <button
-            key={type}
-            className={`meal-btn ${mealType === type ? 'active' : ''}`}
-            onClick={(e) => handleMealTap(type, e)}
-            style={{ position: 'relative', overflow: 'hidden' }}
+            className={`btn-primary ${saved ? 'btn-saved' : ''}`}
+            onClick={handleSave}
           >
-            {type}
-            {/* Ripple */}
-            {ripple?.meal === type && (
-              <span
-                className="meal-ripple"
-                style={{ left: ripple.x, top: ripple.y }}
-              />
-            )}
+            {saved ? '✓ Added!' : 'Save & Add Another'}
           </button>
-        ))}
-      </div>
-
-      <button
-        className={`btn-primary ${saved ? 'btn-saved' : ''}`}
-        onClick={handleSave}
-      >
-        {saved ? '✓ Added!' : 'Save & Add Another'}
-      </button>
+        </>
+      )}
     </section>
   );
 };

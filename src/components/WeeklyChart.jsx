@@ -35,17 +35,6 @@ const WeeklyChart = ({ entries, goal }) => {
         width="100%"
         style={{ overflow: 'visible' }}
       >
-        {/* Goal line */}
-        <line
-          x1={0} y1={GOAL_Y}
-          x2={WIDTH} y2={GOAL_Y}
-          stroke="rgba(0,230,118,0.3)"
-          strokeWidth={1}
-          strokeDasharray="4 4"
-        />
-        <text x={WIDTH - 4} y={GOAL_Y - 4} fill="rgba(0,230,118,0.6)"
-          fontSize="9" textAnchor="end">Goal</text>
-
         {/* Bars */}
         {bars.map((bar, i) => {
           const barH = bar.total > 0 ? Math.max((bar.total / maxVal) * HEIGHT, 4) : 0;
@@ -97,6 +86,27 @@ const WeeklyChart = ({ entries, goal }) => {
             </g>
           );
         })}
+
+        {/* Goal line & Friendly Badge (drawn on top of bars) */}
+        <line
+          x1={0} y1={GOAL_Y}
+          x2={WIDTH - 76} y2={GOAL_Y}
+          stroke="rgba(0,230,118,0.5)"
+          strokeWidth={1.5}
+          strokeDasharray="6 4"
+        />
+        <rect
+          x={WIDTH - 72} y={GOAL_Y - 9}
+          width={72} height={18}
+          rx={9}
+          fill="#112b1c"
+          stroke="rgba(0,230,118,0.4)"
+          strokeWidth={1}
+        />
+        <text x={WIDTH - 36} y={GOAL_Y + 3} fill="#00e676"
+          fontSize="8" fontWeight="700" textAnchor="middle">
+          Goal: {goal}
+        </text>
       </svg>
     </div>
   );

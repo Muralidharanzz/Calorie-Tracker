@@ -14,7 +14,8 @@ const defaultUser = {
   companionPersona: 'balanced', // 'balanced', 'strict', 'cheerleader'
   mealTimes: { Breakfast: '09:00', Lunch: '13:00', Dinner: '19:00' },
   waterGoalType: 'glass', // 'glass' or 'bottle'
-  waterGoal: 8
+  waterGoal: 8,
+  sugarControlMode: false
 };
 
 export function useDataStore() {
@@ -71,6 +72,10 @@ export function useDataStore() {
     setUser(prev => ({ ...prev, waterGoalType: type, waterGoal: amount }));
   };
 
+  const updateSugarControlMode = (enabled) => {
+    setUser(prev => ({ ...prev, sugarControlMode: enabled }));
+  };
+
   const addEntry = (entry) => {
     const newEntry = {
       ...entry,
@@ -115,6 +120,7 @@ export function useDataStore() {
     updateCompanionPersona,
     updateMealTimes,
     updateWaterSettings,
+    updateSugarControlMode,
     addEntry,
     getEntriesForDate,
     deleteEntry,

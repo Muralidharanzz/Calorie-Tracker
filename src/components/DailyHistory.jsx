@@ -1,5 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import WeeklyChart from './WeeklyChart';
+import { calculateScore } from '../utils/scoreEngine';
 
 const MEAL_ORDER = { 'Breakfast': 1, 'Lunch': 2, 'Snacks': 3, 'Dinner': 4 };
 
@@ -52,11 +53,15 @@ const SwipeEntry = ({ entry, onDelete }) => {
 };
 
 /* ── Main component ────────────────────────────────── */
-const DailyHistory = ({ entries, getEntriesForDate, deleteEntry, duplicateDay }) => {
+const DailyHistory = ({ entries, user, getEntriesForDate, deleteEntry, duplicateDay }) => {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
 
   const dailyEntries = getEntriesForDate(selectedDate);
   const totalCalories = dailyEntries.reduce((acc, curr) => acc + curr.calories, 0);
+
+  const { score, grade, color } = useMemo(() => 
+    calculateScore(dailyEntries, user?.dailyCalorieGoal || 2000, 0, user?.mealTimes, selectedDate, user),
+  [dailyEntries, user, selectedDate]);
 
   const grouped = dailyEntries.reduce((acc, curr) => {
     if (!acc[curr.mealType]) acc[curr.mealType] = [];
@@ -85,7 +90,7 @@ const DailyHistory = ({ entries, getEntriesForDate, deleteEntry, duplicateDay })
     <section className="history-view">
 
       {/* 7-day bar chart */}
-      <WeeklyChart entries={entries} goal={2000} />
+      <WeeklyChart entries={entries} goal={user?.dailyCalorieGoal || 2000} />
 
       {/* Day selector */}
       <div className="date-selector">
@@ -94,9 +99,23 @@ const DailyHistory = ({ entries, getEntriesForDate, deleteEntry, duplicateDay })
         <button className="icon-btn" onClick={handleNextDay}>→</button>
       </div>
 
-      <div className="history-summary">
-        <div>Total: <strong>{totalCalories} kcal</strong></div>
-        <button className="btn-secondary" onClick={handleDuplicate}>↻ Repeat Yesterday</button>
+      <div className="history-summary" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <div style={{ marginBottom: 4 }}>Total: <strong>{totalCalories} kcal</strong></div>
+          <button className="btn-secondary" style={{ padding: '4px 8px', fontSize: '0.8rem' }} onClick={handleDuplicate}>↻ Repeat Day</button>
+        </div>
+        <div 
+          className="grade-badge" 
+          style={{
+            borderColor: color,
+            background: `${color}15`,
+            color: color,
+            marginLeft: 'auto'
+          }}
+        >
+          <span className="grade-letter">{grade}</span>
+          <span className="grade-score">{score}</span>
+        </div>
       </div>
 
       {sortedMeals.length === 0 ? (

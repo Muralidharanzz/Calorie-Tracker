@@ -151,13 +151,14 @@ function App() {
           <>
             <Dashboard user={store.user} entries={store.entries} />
             <WaterTracker user={store.user} />
-            <FoodLogger onAddEntry={store.addEntry} recentFoods={store.recentFoods} />
+            <FoodLogger onAddEntry={store.addEntry} recentFoods={store.recentFoods} user={store.user} />
           </>
         )}
 
         {activeTab === 'HISTORY' && (
           <DailyHistory
             entries={store.entries}
+            user={store.user}
             getEntriesForDate={store.getEntriesForDate}
             deleteEntry={store.deleteEntry}
             duplicateDay={store.duplicateDay}
@@ -176,6 +177,7 @@ function App() {
             updateCompanionPersona={store.updateCompanionPersona}
             updateMealTimes={store.updateMealTimes}
             updateWaterSettings={store.updateWaterSettings}
+            updateSugarControlMode={store.updateSugarControlMode}
             onNavigateHistory={() => navigate('HISTORY')}
           />
         )}
